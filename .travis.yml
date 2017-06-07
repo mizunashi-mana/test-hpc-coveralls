@@ -34,7 +34,7 @@ script:
 - stack --no-terminal test --haddock --no-haddock-deps --coverage
 
 after_script:
-- hpc-coveralls spec-test --exclude-dir=test --display-report --repo-token=$COVERALLS_REPO_TOKEN
+- hpc-coveralls spec-test --exclude-dir=test --display-report --repo-token $COVERALLS_REPO_TOKEN
 
 secure: "hRk3U0WbyKXFsUlmnCs/zZS1Zn0yi8BAetWAIBqVZJOJ6Tp7h9nKEq83qAWXOgf8HJvvhsioRc3WtIPlknRLmKRkWqGdTpQyNkEoNg4AiNH7FaQMUxEwRv08cm2QRToxgLQFZ7sjmdtidFkeP2WQ
 d/qCwZva/64Jlk3Q3+UGBZO2VlMExTzTvEyW72p9wLikESFtQxa3/4izECHQerkHUQzAZAk60u16hSar7pTItH+FVJuph/eieG8Ujof9Zw2QV3iM9z1F/Rs+dgLVnrtE39vFuIY6YhrMVaw9TpSDqoNpWMePk1a
