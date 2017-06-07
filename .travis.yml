@@ -22,7 +22,7 @@ before_install:
 - stack --no-terminal setup
 - git clone https://github.com/mizunashi-mana/hpc-coveralls.git ~/.local/src/hpc-coveralls
 - git -C ~/.local/src/hpc-coveralls checkout -b add-stack-support
-- cd ~/.local/src/hpc-coveralls && stack --no-terminal install
+- cd ~/.local/src/hpc-coveralls && stack --no-terminal init . && stack --no-terminal install
 
 install:
 # Build dependencies
