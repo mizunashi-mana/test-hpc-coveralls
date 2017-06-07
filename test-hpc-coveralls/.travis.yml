@@ -1,0 +1,42 @@
+sudo: false
+
+# Do not choose a language; we provide our own build tools.
+language: generic
+
+# Caching so the next build will be fast too.
+cache:
+  directories:
+  - $HOME/.stack
+
+# Ensure necessary system libraries are present
+addons:
+  apt:
+    packages:
+      - libgmp-dev
+
+before_install:
+# Download and unpack the stack executable
+- mkdir -p ~/.local/bin
+- export PATH=$HOME/.local/bin:$PATH
+- travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+
+install:
+# Build dependencies
+- stack --no-terminal setup
+- stack --no-terminal build --only-dependencies
+
+script:
+# Build the package, its tests, and its docs and run the tests
+- stack --no-terminal test --haddock --no-haddock-deps --coverage
+
+after_script:
+- stack install hpc-coveralls
+- mkdir -p dist/hpc/tix
+- cp (stack path --local-hpc-root)/test-hpc-coveralls/*/*.tix dist/hpc/tix/
+- ./hpc-coveralls spec-test --exclude-dir=test --display-report --repo-token=$COVERALLS_REPO_TOKEN
+
+secure: "hRk3U0WbyKXFsUlmnCs/zZS1Zn0yi8BAetWAIBqVZJOJ6Tp7h9nKEq83qAWXOgf8HJvvhsioRc3WtIPlknRLmKRkWqGdTpQyNkEoNg4AiNH7FaQMUxEwRv08cm2QRToxgLQFZ7sjmdtidFkeP2WQ
+d/qCwZva/64Jlk3Q3+UGBZO2VlMExTzTvEyW72p9wLikESFtQxa3/4izECHQerkHUQzAZAk60u16hSar7pTItH+FVJuph/eieG8Ujof9Zw2QV3iM9z1F/Rs+dgLVnrtE39vFuIY6YhrMVaw9TpSDqoNpWMePk1a
+pLCMjQxyIkxRA9ddCWjIPkBv8krIUSOW8x82984a9ydNZ+bHnLdZ7OWZAu72fVR7lDX8ZHdWZ8fgpGjwz7cPnobdsKbLgvV9MDMTlcpe6v5qp/lGVnxI7lCib05vCWEX7hj+AbmUHPMa+C2Ok1gE6blM2pybWwQ
+c5OBG2en06Ty500TLYFKqghUacvPPkDfdcy4fmlUSy6MQktaV6OFFQK8XaZFGnvoZumKQ7AO5R+c5Co5yTgKVc3Bxef1ozVL2c5+BWtQRptHYU+hCLByofUQQ6RFCYqkOKZizvIsX8PbI2+0QvrhhvnytBL3s9d
+WYdwb8AzwVN2DPN+6Qa8C6R/VUff8zCAwDxSIO2a5g1QeDJWnOgn0K4NfM="
