@@ -19,10 +19,11 @@ before_install:
 - mkdir -p ~/.local/bin
 - export PATH=$HOME/.local/bin:$PATH
 - travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+- stack --no-terminal setup
+- stack --no-terminal install hpc-coveralls
 
 install:
 # Build dependencies
-- stack --no-terminal setup
 - stack --no-terminal build --only-dependencies
 
 script:
@@ -30,9 +31,8 @@ script:
 - stack --no-terminal test --haddock --no-haddock-deps --coverage
 
 after_script:
-- stack --no-terminal install hpc-coveralls
-- mkdir -p dist/hpc/tix
-- cp "$(stack path --local-hpc-root)/test-hpc-coveralls/spec-test/spec-test.tix" dist/hpc/tix/
+- mkdir -p dist/hpc/
+- cp -r "$(stack path --local-hpc-root)/test-hpc-coveralls/" dist/hpc/tix
 - hpc-coveralls spec-test --exclude-dir=test --display-report --repo-token=$COVERALLS_REPO_TOKEN
 
 secure: "hRk3U0WbyKXFsUlmnCs/zZS1Zn0yi8BAetWAIBqVZJOJ6Tp7h9nKEq83qAWXOgf8HJvvhsioRc3WtIPlknRLmKRkWqGdTpQyNkEoNg4AiNH7FaQMUxEwRv08cm2QRToxgLQFZ7sjmdtidFkeP2WQ
