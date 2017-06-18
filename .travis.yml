@@ -46,7 +46,9 @@ script:
 - cabal test --show-details=always
 
 after_script:
+- mv ~/.local/bin/stack{,.bak}
 - hpc-coveralls spec-test --exclude-dir=test --display-report --dont-send
+- mv ~/.local/bin/stack{.bak,}
 - hpc-coveralls spec-test --exclude-dir=test --display-report --use-stack-cov --repo-token $COVERALLS_REPO_TOKEN
 
 env:
