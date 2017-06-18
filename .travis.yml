@@ -1,9 +1,5 @@
 sudo: false
 
-env:
-  - USE_STACK='true'
-  - USE_STACK='false'
-
 # Do not choose a language; we provide our own build tools.
 language: generic
 
@@ -11,6 +7,7 @@ language: generic
 cache:
   directories:
   - $HOME/.stack
+  - $HOME/.cabal
 
 # Ensure necessary system libraries are present
 addons:
@@ -32,23 +29,25 @@ before_install:
 - sh -c 'cd ~/.local/src/hpc-coveralls && stack --no-terminal init . && stack --no-terminal install'
 
 install:
-# Build dependencies
-- |
-  if [[ "$USE_STACK" = "true" ]]; then
-    stack --no-terminal build --only-dependencies --coverage
-  else
-    stack exec -- cabal update
-    stack exec -- cabal install --only-dependencies --enable-tests
-    stack exec -- cabal configure --enable-tests --enable-coverage
-    stack exec -- cabal test --show-details=always
-  fi
+# stack build
+- stack --no-terminal build --only-dependencies --coverage
+
+# cabal build
+- cabal update
+- cabal install --only-dependencies --enable-tests
+- cabal configure --enable-tests --enable-coverage
+- cabal build
 
 script:
-# Build the package, its tests, and its docs and run the tests
+# stack run test
 - stack --no-terminal test --haddock --no-haddock-deps --coverage
 
+# cabal run test
+- cabal test --show-details=always
+
 after_script:
-- hpc-coveralls spec-test --exclude-dir=test --display-report --repo-token $COVERALLS_REPO_TOKEN
+- hpc-coveralls spec-test --exclude-dir=test --display-report --dont-send
+- hpc-coveralls spec-test --exclude-dir=test --display-report --use-stack-cov --repo-token $COVERALLS_REPO_TOKEN
 
 env:
   global:
