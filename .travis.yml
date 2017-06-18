@@ -37,15 +37,20 @@ install:
   if [[ "$USE_STACK" = "true" ]]; then
     stack --no-terminal build --only-dependencies --coverage
   else
-    stack exec -- cabal update
-    stack exec -- cabal install --only-dependencies --enable-tests
-    stack exec -- cabal configure --enable-tests --enable-coverage
-    stack exec -- cabal test --show-details=always
+    cabal update
+    cabal install --only-dependencies --enable-tests
+    cabal configure --enable-tests --enable-coverage
+    cabal build
   fi
 
 script:
 # Build the package, its tests, and its docs and run the tests
-- stack --no-terminal test --haddock --no-haddock-deps --coverage
+- |
+  if [[ "$USE_STACK" = "true" ]]; then
+    stack --no-terminal test --haddock --no-haddock-deps --coverage
+  else
+    cabal test --show-details=always
+  fi
 
 after_script:
 - hpc-coveralls spec-test --exclude-dir=test --display-report --repo-token $COVERALLS_REPO_TOKEN
